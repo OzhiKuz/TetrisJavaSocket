@@ -1,5 +1,6 @@
+package server;
+
 import java.awt.Point;
-import java.util.ArrayList;
 
 public class QFigure extends Figure {
     public QFigure(int[][] field) {

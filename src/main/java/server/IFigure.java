@@ -1,3 +1,5 @@
+package server;
+
 import java.awt.*;
 
 public class IFigure extends Figure {
