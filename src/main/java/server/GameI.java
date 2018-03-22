@@ -10,4 +10,5 @@ public interface GameI extends Remote {
     boolean generationFigure() throws RemoteException;
     int checkForDeleteLine() throws RemoteException;
     void setAllTwo() throws RemoteException;
+    boolean turn90() throws RemoteException;
 }

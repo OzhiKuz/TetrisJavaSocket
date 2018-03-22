@@ -4,6 +4,7 @@ import client.controllers.threads.Pause;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -19,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import server.GameI;
 
+import java.awt.event.InputEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
@@ -34,6 +37,7 @@ public class GameController {
     private Stage primaryStage;
     private GameI stub;
     private int points;
+    private Scene scene;
 
     private Timer timer;
     private boolean flag = true;
@@ -65,6 +69,7 @@ public class GameController {
     public Scene getScene(Image newFigure, int[][] field) throws RemoteException, FileNotFoundException {
 
         ImageView[][] oldMatr = matr;
+
         matr = new ImageView[heigth][width];
         for (int i = 0; i < matr.length; i++)
             for (int j = 0; j < matr[i].length; j++) {
@@ -87,7 +92,62 @@ public class GameController {
                 matr[i][j].setFitWidth(400 / heigth);
             }
 
-        return new Scene(getContainer(), 590, 390);
+            scene = new Scene(getContainer(), 590, 390);
+                    scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
+                        public void handle(KeyEvent ke) {
+                            if (ke.getCharacter().equals("d")) {
+                                try {
+                                    stub.makeMove(0,1);
+                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (ke.getCharacter().equals("w")) {
+                                try {
+                                    stub.turn90();
+                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }  catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (ke.getCharacter().equals("s")) {
+                                try {
+                                    stub.makeMove(1,0);
+                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (ke.getCharacter().equals("a")) {
+                                try {
+                                    stub.makeMove(0,-1);
+                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+        return scene;
     }
 
     private Pane getContainer() throws RemoteException {

@@ -19,7 +19,7 @@ public class Game implements GameI {
     @Override
     public boolean makeMove(int x, int y) throws RemoteException, InterruptedException {
 
-        //Thread.sleep(5000);
+        //Thread.sleep(1000);
         Point[] point = this.figure.getCurrentPoints();
 
         if(this.figure.move(x,y,gameField))
@@ -129,6 +129,11 @@ public class Game implements GameI {
         {
             gameField[point[i].x][point[i].y] = 2;
         }
+    }
+
+    @Override
+    public boolean turn90() throws RemoteException {
+        return figure.turn90(gameField);
     }
 
     private void deleteLine(int x)
