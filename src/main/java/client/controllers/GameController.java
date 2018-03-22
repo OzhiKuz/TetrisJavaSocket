@@ -1,6 +1,8 @@
 package client.controllers;
 
+import client.controllers.threads.Pause;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -21,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.Random;
+import java.util.TimerTask;
 
 public class GameController {
 
@@ -112,6 +115,7 @@ public class GameController {
         }
 
         Pane vbox = new VBox(hbox);
+        //vbox.setId("testId");
         return new HBox(vbox,vbox1);
     }
 
@@ -124,15 +128,26 @@ public class GameController {
 
             Random rand = new Random();
             int picture = rand.nextInt(4);
-            int[][] test = stub.getGameField();
             primaryStage.setScene(getScene(new Image("/" + picture + ".png"),stub.getGameField()));
 
             boolean flag;
 
             do {
+                /*TimerTask task = new TimerTask() {
+                    public void run() {
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+
+
+                            }
+                        });
+
+                    }
+                };*/
+                flag = stub.makeMove(1,0);
 
                 primaryStage.setScene(getScene(new Image("/" + picture + ".png"),stub.getGameField()));
-                flag = stub.makeMove(1,0);
+                primaryStage.show();
             }while (flag);
 
             stub.setAllTwo();

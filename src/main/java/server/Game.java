@@ -17,8 +17,9 @@ public class Game implements GameI {
     }
 
     @Override
-    public boolean makeMove(int x, int y) throws RemoteException {
+    public boolean makeMove(int x, int y) throws RemoteException, InterruptedException {
 
+        //Thread.sleep(5000);
         Point[] point = this.figure.getCurrentPoints();
 
         if(this.figure.move(x,y,gameField))
