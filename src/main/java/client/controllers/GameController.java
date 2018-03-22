@@ -229,10 +229,15 @@ public class GameController {
                             int deletedLines = stub.checkForDeleteLine();
                             if (deletedLines != 0) {
                                 primaryStage.setScene(getScene(stub.getGameField()));
+
                                 for (int i = 0; i < deletedLines; i++) {
                                     if (speed > 300)
-                                        speed -= 25;
+                                        speed -= 50;
                                 }
+
+                                timer.cancel();
+                                timer = new java.util.Timer();
+                                clock();
                             }
                             if (stub.generationFigure()) {
                                 flag = true;
@@ -251,7 +256,7 @@ public class GameController {
             }
         };
         long delay = 1000;
-        timer.schedule(task, delay, 1000);
+        timer.schedule(task, speed, speed);
     }
 
     private class EventHandlerEndGame implements javafx.event.EventHandler {
