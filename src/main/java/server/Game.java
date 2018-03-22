@@ -101,16 +101,16 @@ public class Game implements GameI {
     @Override
     public int checkForDeleteLine() throws RemoteException {
         Point[] point = this.figure.getCurrentPoints();
-        int deletedLines = 0;
-        for (int i = 0; i < point.length; i++)
-        {
-            int count = 0;
-            for (int j = 0; j < gameField[point[i].x].length; j++)
-            {
-                if (gameField[point[i].x][j] == 2)
+                int deletedLines = 0;
+                for (int i = 0; i < point.length; i++)
                 {
-                    count++;
-                }
+                    int count = 0;
+                    for (int j = 0; j < gameField[point[i].x].length; j++)
+                    {
+                        if (gameField[point[i].x][j] == 2)
+                        {
+                            count++;
+                        }
             }
             if (count == gameField[point[i].x].length)
             {
@@ -133,7 +133,26 @@ public class Game implements GameI {
 
     @Override
     public boolean turn90() throws RemoteException {
-        return figure.turn90(gameField);
+        Point[] point = this.figure.getCurrentPoints();
+
+        if(this.figure.turn90(gameField))
+        {
+            for (int i = 0; i < point.length; i++)
+            {
+                gameField[point[i].x][point[i].y] = 0;
+
+            }
+            point = this.figure.getCurrentPoints();
+            for (int i = 0; i < point.length; i++)
+            {
+                gameField[point[i].x][point[i].y] = 1;
+
+            }
+            return true;
+        } else
+        {
+            return false;
+        }
     }
 
     private void deleteLine(int x)
