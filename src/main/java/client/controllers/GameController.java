@@ -1,10 +1,7 @@
 package client.controllers;
 
-import client.controllers.threads.Pause;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -12,17 +9,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import server.GameI;
 
-import java.awt.event.InputEvent;
-import java.io.FileInputStream;
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.Random;
@@ -38,6 +32,7 @@ public class GameController {
     private GameI stub;
     private int points;
     private Scene scene;
+    private int picture;
 
     private Timer timer;
     private boolean flag = true;
@@ -65,8 +60,77 @@ public class GameController {
         this.stub = stub;
     }
 
+    private void setOnKeyTypedForScene(Scene scene)
+    {
+        scene.setOnKeyTyped(ke -> {
+            if (ke.getCharacter().equals("d") || ke.getCharacter().equals("в")) {
+                try {
+                    Point[] oldPoints1 = stub.getCurrentPoints();
+                    stub.makeMove(0, 1);
+                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
 
-    public Scene getScene(Image newFigure, int[][] field) throws RemoteException, FileNotFoundException {
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ke.getCharacter().equals("w") || ke.getCharacter().equals("ц")) {
+                try {
+                    Point[] oldPoints1 = stub.getCurrentPoints();
+                    stub.turn90();
+                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ke.getCharacter().equals("s") || ke.getCharacter().equals("ы")) {
+                try {
+                    Point[] oldPoints1 = stub.getCurrentPoints();
+                    stub.makeMove(1, 0);
+                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ke.getCharacter().equals("a") || ke.getCharacter().equals("ф")) {
+                try {
+                    Point[] oldPoints1 = stub.getCurrentPoints();
+                    stub.makeMove(0, -1);
+                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private Scene setFigureToScene(Point[] oldPoints, int[][] field) throws RemoteException {
+        Point[] points = stub.getCurrentPoints();
+        if (oldPoints != null)
+        for (int i = 0; i < oldPoints.length; i++) {
+            matr[oldPoints[i].x][oldPoints[i].y] = new ImageView(new Image("/field.png"));
+            matr[oldPoints[i].x][oldPoints[i].y].setFitHeight(400 / heigth);
+            matr[oldPoints[i].x][oldPoints[i].y].setFitWidth(400 / heigth);
+        }
+        for (int i = 0; i < points.length; i++) {
+            matr[points[i].x][points[i].y] = new ImageView(new Image("/" + picture + ".png"));
+            matr[points[i].x][points[i].y].setFitHeight(400 / heigth);
+            matr[points[i].x][points[i].y].setFitWidth(400 / heigth);
+        }
+        Scene scene = new Scene(getContainer(), 590, 390);
+        setOnKeyTypedForScene(scene);
+        return scene;
+    }
+
+    public Scene getScene(int[][] field) throws RemoteException, FileNotFoundException {
 
         ImageView[][] oldMatr = matr;
 
@@ -81,7 +145,7 @@ public class GameController {
                     continue;
                 } else if (field[i][j] == 1) {
 
-                    matr[i][j] = new ImageView(newFigure);
+                    matr[i][j] = new ImageView(new Image("/" + picture + ".png"));
                     matr[i][j].setFitHeight(400 / heigth);
                     matr[i][j].setFitWidth(400 / heigth);
                     continue;
@@ -93,60 +157,7 @@ public class GameController {
             }
 
             scene = new Scene(getContainer(), 590, 390);
-                    scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
-                        public void handle(KeyEvent ke) {
-                            if (ke.getCharacter().equals("d")) {
-                                try {
-                                    stub.makeMove(0,1);
-                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
-
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            if (ke.getCharacter().equals("w")) {
-                                try {
-                                    stub.turn90();
-                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
-
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                }  catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            if (ke.getCharacter().equals("s")) {
-                                try {
-                                    stub.makeMove(1,0);
-                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
-
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            if (ke.getCharacter().equals("a")) {
-                                try {
-                                    stub.makeMove(0,-1);
-                                    primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
-
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
+        setOnKeyTypedForScene(scene);
         return scene;
     }
 
@@ -187,8 +198,8 @@ public class GameController {
         //генерируем самую первую фигуру
         stub.generationFigure();
         Random rand = new Random();
-        int picture = rand.nextInt(4);
-        primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+        picture = rand.nextInt(4);
+        primaryStage.setScene(setFigureToScene(null, stub.getGameField()));
         // метод создающий задачу
         clock();
 
@@ -209,13 +220,15 @@ public class GameController {
                 Platform.runLater(() -> {
                     try {
                         if (flag) {
+                            Point[] oldPoints = stub.getCurrentPoints();
                             flag = stub.makeMove(1, 0);
-                            primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+                            primaryStage.setScene(setFigureToScene(oldPoints, stub.getGameField()));
 
                         } else {
                             stub.setAllTwo();
                             int deletedLines = stub.checkForDeleteLine();
                             if (deletedLines != 0) {
+                                primaryStage.setScene(getScene(stub.getGameField()));
                                 for (int i = 0; i < deletedLines; i++) {
                                     if (speed > 300)
                                         speed -= 25;
@@ -223,7 +236,9 @@ public class GameController {
                             }
                             if (stub.generationFigure()) {
                                 flag = true;
-                                primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+                                Random rand = new Random();
+                                picture = rand.nextInt(4);
+                                primaryStage.setScene(setFigureToScene(null, stub.getGameField()));
                                 //timer = new Timer();
                                 //clock();
 

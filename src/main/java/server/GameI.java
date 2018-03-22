@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -11,4 +12,5 @@ public interface GameI extends Remote {
     int checkForDeleteLine() throws RemoteException;
     void setAllTwo() throws RemoteException;
     boolean turn90() throws RemoteException;
+    Point[] getCurrentPoints() throws RemoteException;
 }

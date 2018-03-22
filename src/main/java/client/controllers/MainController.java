@@ -29,7 +29,7 @@ public class MainController {
     @FXML
     public void initialize()
     {
-        comboBoxSizeField.getItems().addAll("5x10","15x25","20x30");
+        comboBoxSizeField.getItems().addAll("5x10","8x15","20x30");
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -85,7 +85,7 @@ public class MainController {
         setSize(getSize());
         controller.setWidth(width);
         controller.setHeigth(heigth);
-        stage.setScene(controller.getScene(null,new int[heigth][width]));
+        stage.setScene(controller.getScene(new int[heigth][width]));
         stage.show();
         controller.processGame();
     }
@@ -94,7 +94,7 @@ public class MainController {
     {
         if (comboBoxSizeField.getValue().compareTo("5x10") == 0)
             return 3;
-        if (comboBoxSizeField.getValue().compareTo("15x25") == 0)
+        if (comboBoxSizeField.getValue().compareTo("8x15") == 0)
             return 4;
         if (comboBoxSizeField.getValue().compareTo("20x30") == 0)
             return 5;
@@ -110,8 +110,8 @@ public class MainController {
         }
         if (size == 4)
         {
-            this.width = 15;
-            this.heigth = 25;
+            this.width = 8;
+            this.heigth = 15;
             return;
         }
         if (size == 5)

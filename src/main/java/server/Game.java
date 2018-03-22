@@ -155,6 +155,11 @@ public class Game implements GameI {
         }
     }
 
+    @Override
+    public Point[] getCurrentPoints() throws RemoteException {
+        return figure.getCurrentPoints();
+    }
+
     private void deleteLine(int x)
     {
         for (int i = x; i > 0; i--)
