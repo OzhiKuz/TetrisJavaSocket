@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.Random;
+import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameController {
@@ -33,6 +34,10 @@ public class GameController {
     private Stage primaryStage;
     private GameI stub;
     private int points;
+
+    private Timer timer;
+    private boolean flag = true;
+    private int speed = 1000;
 
 
     @FXML
@@ -57,23 +62,19 @@ public class GameController {
     }
 
 
-
     public Scene getScene(Image newFigure, int[][] field) throws RemoteException, FileNotFoundException {
 
         ImageView[][] oldMatr = matr;
         matr = new ImageView[heigth][width];
         for (int i = 0; i < matr.length; i++)
-            for (int j = 0; j < matr[i].length; j++)
-            {
-                if (field[i][j] == 2)
-                {
+            for (int j = 0; j < matr[i].length; j++) {
+                if (field[i][j] == 2) {
                     Image im = oldMatr[i][j].getImage();
                     matr[i][j] = new ImageView(im);
                     matr[i][j].setFitHeight(400 / heigth);
                     matr[i][j].setFitWidth(400 / heigth);
                     continue;
-                } else if (field[i][j] == 1)
-                {
+                } else if (field[i][j] == 1) {
 
                     matr[i][j] = new ImageView(newFigure);
                     matr[i][j].setFitHeight(400 / heigth);
@@ -88,6 +89,7 @@ public class GameController {
 
         return new Scene(getContainer(), 590, 390);
     }
+
     private Pane getContainer() throws RemoteException {
         Button button = new Button("Завершить!");
         button.setPrefSize(150, 80);
@@ -101,14 +103,11 @@ public class GameController {
         vbox1.setPadding(new Insets(20, 20, 20, 20));
 
 
-
         Pane[] hbox = new Pane[heigth];
 
-        for (int i = 0; i < heigth; i++)
-        {
+        for (int i = 0; i < heigth; i++) {
             ImageView[] im = new ImageView[width];
-            for (int j = 0; j < width; j++)
-            {
+            for (int j = 0; j < width; j++) {
                 im[j] = matr[i][j];
             }
             hbox[i] = new HBox(im);
@@ -116,60 +115,74 @@ public class GameController {
 
         Pane vbox = new VBox(hbox);
         //vbox.setId("testId");
-        return new HBox(vbox,vbox1);
+        return new HBox(vbox, vbox1);
     }
 
     public void processGame() throws FileNotFoundException, RemoteException, InterruptedException {
-        stub.setGameField(new int [heigth][width]);
-        int speed = 1000;
+        timer = new java.util.Timer();
 
-        while(stub.generationFigure())
-        {
+        stub.setGameField(new int[heigth][width]);
 
-            Random rand = new Random();
-            int picture = rand.nextInt(4);
-            primaryStage.setScene(getScene(new Image("/" + picture + ".png"),stub.getGameField()));
+        //while (stub.generationFigure()) {
+        //генерируем самую первую фигуру
+        stub.generationFigure();
+        Random rand = new Random();
+        int picture = rand.nextInt(4);
+        primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+        // метод создающий задачу
+        clock();
 
-            boolean flag;
-
-            do {
-                /*TimerTask task = new TimerTask() {
-                    public void run() {
-                        Platform.runLater(new Runnable() {
-                            public void run() {
-
-
-                            }
-                        });
-
-                    }
-                };*/
-                flag = stub.makeMove(1,0);
-
-                primaryStage.setScene(getScene(new Image("/" + picture + ".png"),stub.getGameField()));
-                primaryStage.show();
-            }while (flag);
-
-            stub.setAllTwo();
+            /*stub.setAllTwo();
             int deletedLines = stub.checkForDeleteLine();
-            if (deletedLines != 0)
-            {
-                for (int i = 0; i < deletedLines; i++)
-                {
+            if (deletedLines != 0) {
+                for (int i = 0; i < deletedLines; i++) {
                     if (speed > 300)
                         speed -= 25;
                 }
-            }
-        }
-
-
-
+            }*/
+        //}
     }
 
-    private class EventHandlerEndGame implements javafx.event.EventHandler
-    {
+    private void clock() {
+        TimerTask task = new TimerTask() {
+            public void run() {
+                Platform.runLater(() -> {
+                    try {
+                        if (flag) {
+                            flag = stub.makeMove(1, 0);
+                            primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+
+                        } else {
+                            stub.setAllTwo();
+                            int deletedLines = stub.checkForDeleteLine();
+                            if (deletedLines != 0) {
+                                for (int i = 0; i < deletedLines; i++) {
+                                    if (speed > 300)
+                                        speed -= 25;
+                                }
+                            }
+                            if (stub.generationFigure()) {
+                                flag = true;
+                                primaryStage.setScene(getScene(new Image("/2.png"), stub.getGameField()));
+                                //timer = new Timer();
+                                //clock();
+
+                            }else timer.cancel();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        };
+        long delay = 1000;
+        timer.schedule(task, delay, 1000);
+    }
+
+    private class EventHandlerEndGame implements javafx.event.EventHandler {
         @Override
         public void handle(Event event) {
+            timer.cancel();
             primaryStage.close();
         }
     }
