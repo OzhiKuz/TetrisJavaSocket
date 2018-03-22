@@ -25,7 +25,7 @@ public class TFigure extends Figure {
         points[0] = new Point(0, baseCol - 1);
         points[1] = new Point(1, baseCol - 1);
         points[2] = new Point(2, baseCol - 1);
-        points[3] = new Point(0, baseCol);
+        points[3] = new Point(1, baseCol);
         states.add(points);
         //горизонтальная ввниз
         points = new Point[4];
