@@ -138,7 +138,7 @@ public class GameController {
         for (int i = 0; i < matr.length; i++)
             for (int j = 0; j < matr[i].length; j++) {
                 if (field[i][j] == 2) {
-                    Image im = oldMatr[i][j].getImage();
+                    Image im = oldMatr[i - 1][j].getImage();
                     matr[i][j] = new ImageView(im);
                     matr[i][j].setFitHeight(400 / heigth);
                     matr[i][j].setFitWidth(400 / heigth);
