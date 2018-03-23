@@ -68,6 +68,7 @@ public class GameController {
                 try {
                     Point[] oldPoints1 = stub.getCurrentPoints();
                     stub.makeMove(0, 1);
+                    flag = true;
                     primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
 
                 } catch (RemoteException e) {
@@ -82,6 +83,7 @@ public class GameController {
                 try {
                     Point[] oldPoints1 = stub.getCurrentPoints();
                     stub.turn90();
+                    flag = true;
                     primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
 
                 } catch (RemoteException e) {
@@ -94,6 +96,7 @@ public class GameController {
                 try {
                     Point[] oldPoints1 = stub.getCurrentPoints();
                     stub.makeMove(1, 0);
+                    flag = true;
                     primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
 
                 } catch (RemoteException e) {
