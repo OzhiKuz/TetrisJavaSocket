@@ -1,12 +1,18 @@
 package server;
 
 import java.awt.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Properties;
 import java.util.Random;
 
 public class Game implements GameI {
     int[][] gameField;
     Figure figure;
+    int points;
+    boolean newRecord = false;
 
     public int[][] getGameField() {
         return gameField;
@@ -14,6 +20,7 @@ public class Game implements GameI {
 
     public void setGameField(int[][] gameField) {
         this.gameField = gameField;
+        points = 0;
     }
 
     @Override
@@ -44,7 +51,7 @@ public class Game implements GameI {
     }
 
     @Override
-    public boolean generationFigure() throws RemoteException {
+    public boolean generationFigure() throws IOException {
         int figure = 0;
         Random rand = new Random();
         figure = rand.nextInt(7);
@@ -95,7 +102,11 @@ public class Game implements GameI {
                 gameField[point[i].x][point[i].y] = 1;
             }
             return true;
-        } else return false;
+        } else
+        {
+            setRecord();
+            return false;
+        }
     }
 
     @Override
@@ -115,6 +126,7 @@ public class Game implements GameI {
             if (count == gameField[point[i].x].length)
             {
                 deleteLine(point[i].x);
+                points += 100;
                 deletedLines++;
             }
         }
@@ -160,6 +172,28 @@ public class Game implements GameI {
         return figure.getCurrentPoints();
     }
 
+    @Override
+    public boolean isNewRecord() throws RemoteException {
+        return newRecord;
+    }
+
+    @Override
+    public int getCurrentPoint() throws RemoteException {
+        return points;
+    }
+
+    @Override
+    public int getRecord() throws IOException {
+        Properties prop = new Properties();
+        FileInputStream fileInputStream = new FileInputStream("src/main/resources/records.properties");
+        int record = 0;
+        prop.load(fileInputStream);
+        if (gameField != null)
+        record = Integer.valueOf(prop.getProperty("" + gameField[0].length + ""));
+        fileInputStream.close();
+        return record;
+    }
+
     private void deleteLine(int x)
     {
         for (int i = x; i > 0; i--)
@@ -173,6 +207,24 @@ public class Game implements GameI {
         for (int i = 0; i < gameField[x].length; i++)
         {
             gameField[0][i] = 0;
+        }
+    }
+
+    private void setRecord() throws IOException {
+        Properties prop = new Properties();
+        FileInputStream fileInputStream = new FileInputStream("src/main/resources/records.properties");
+
+        prop.load(fileInputStream);
+        int record = Integer.valueOf(prop.getProperty("" + gameField[0].length + ""));
+        fileInputStream.close();
+
+        if (points > record)
+        {
+            newRecord = true;
+            FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/records.properties");
+            prop.setProperty("" + gameField[0].length + "", String.valueOf(points));
+            prop.store(fileOutputStream,null);
+            fileOutputStream.close();
         }
     }
 

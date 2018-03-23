@@ -5,6 +5,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -18,6 +19,7 @@ import server.GameI;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Timer;
@@ -30,7 +32,6 @@ public class GameController {
     private int heigth;
     private Stage primaryStage;
     private GameI stub;
-    private int points;
     private Scene scene;
     private int picture;
 
@@ -73,6 +74,8 @@ public class GameController {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
             if (ke.getCharacter().equals("w") || ke.getCharacter().equals("ц")) {
@@ -82,6 +85,8 @@ public class GameController {
                     primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
 
                 } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -95,6 +100,8 @@ public class GameController {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
             if (ke.getCharacter().equals("a") || ke.getCharacter().equals("ф")) {
@@ -107,30 +114,32 @@ public class GameController {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
 
-    private Scene setFigureToScene(Point[] oldPoints, int[][] field) throws RemoteException {
+    private Scene setFigureToScene(Point[] oldPoints, int[][] field) throws IOException {
         Point[] points = stub.getCurrentPoints();
         if (oldPoints != null)
         for (int i = 0; i < oldPoints.length; i++) {
             matr[oldPoints[i].x][oldPoints[i].y] = new ImageView(new Image("/field.png"));
-            matr[oldPoints[i].x][oldPoints[i].y].setFitHeight(400 / heigth);
-            matr[oldPoints[i].x][oldPoints[i].y].setFitWidth(400 / heigth);
+            matr[oldPoints[i].x][oldPoints[i].y].setFitHeight(500 / heigth);
+            matr[oldPoints[i].x][oldPoints[i].y].setFitWidth(320 / width);
         }
         for (int i = 0; i < points.length; i++) {
             matr[points[i].x][points[i].y] = new ImageView(new Image("/" + picture + ".png"));
-            matr[points[i].x][points[i].y].setFitHeight(400 / heigth);
-            matr[points[i].x][points[i].y].setFitWidth(400 / heigth);
+            matr[points[i].x][points[i].y].setFitHeight(500 / heigth);
+            matr[points[i].x][points[i].y].setFitWidth(320 / width);
         }
-        Scene scene = new Scene(getContainer(), 590, 390);
+        Scene scene = new Scene(getContainer(), 320, 610);
         setOnKeyTypedForScene(scene);
         return scene;
     }
 
-    public Scene getScene(int[][] field) throws RemoteException, FileNotFoundException {
+    public Scene getScene(int[][] field) throws IOException {
 
         ImageView[][] oldMatr = matr;
 
@@ -140,38 +149,43 @@ public class GameController {
                 if (field[i][j] == 2) {
                     Image im = oldMatr[i - 1][j].getImage();
                     matr[i][j] = new ImageView(im);
-                    matr[i][j].setFitHeight(400 / heigth);
-                    matr[i][j].setFitWidth(400 / heigth);
+                    matr[i][j].setFitHeight(500 / heigth);
+                    matr[i][j].setFitWidth(320 / width);
                     continue;
                 } else if (field[i][j] == 1) {
 
                     matr[i][j] = new ImageView(new Image("/" + picture + ".png"));
-                    matr[i][j].setFitHeight(400 / heigth);
-                    matr[i][j].setFitWidth(400 / heigth);
+                    matr[i][j].setFitHeight(500 / heigth);
+                    matr[i][j].setFitWidth(320 / width);
                     continue;
                 }
 
                 matr[i][j] = new ImageView(new Image("/field.png"));
-                matr[i][j].setFitHeight(400 / heigth);
-                matr[i][j].setFitWidth(400 / heigth);
+                matr[i][j].setFitHeight(500 / heigth);
+                matr[i][j].setFitWidth(320 / width);
             }
 
-            scene = new Scene(getContainer(), 590, 390);
+            scene = new Scene(getContainer(), 320, 610);
         setOnKeyTypedForScene(scene);
         return scene;
     }
 
-    private Pane getContainer() throws RemoteException {
+    private Pane getContainer() throws IOException {
         Button button = new Button("Завершить!");
-        button.setPrefSize(150, 80);
+        button.setPrefSize(150, 40);
         button.setFont(new Font("Times new roman", 20));
+        button.setPadding(new Insets(5,0,0,20));
         button.setOnAction(new EventHandlerEndGame());
-        Label label = new Label("Очки: " + points);
+        Label label = new Label("Очки: " + stub.getCurrentPoint());
         label.setFont(new Font("Times new roman", 20));
-        label.setPadding(new Insets(20, 0, 0, 0));
+        //label.setPadding(new Insets(20, 0, 0, 0));
 
-        Pane vbox1 = new VBox(label, button);
-        vbox1.setPadding(new Insets(20, 20, 20, 20));
+        Label label1 = new Label("Рекорд: " + stub.getRecord());
+        label1.setFont(new Font("Times new roman",20));
+        label1.setPadding(new Insets(0,0,0,20));
+
+        Pane hbox1 = new HBox(label,label1);
+        hbox1.setPadding(new Insets(5, 20, 20, 20));
 
 
         Pane[] hbox = new Pane[heigth];
@@ -186,10 +200,10 @@ public class GameController {
 
         Pane vbox = new VBox(hbox);
         //vbox.setId("testId");
-        return new HBox(vbox, vbox1);
+        return new VBox(hbox1,vbox,button);
     }
 
-    public void processGame() throws FileNotFoundException, RemoteException, InterruptedException {
+    public void processGame() throws IOException {
         timer = new java.util.Timer();
 
         stub.setGameField(new int[heigth][width]);
@@ -247,7 +261,11 @@ public class GameController {
                                 //timer = new Timer();
                                 //clock();
 
-                            }else timer.cancel();
+                            }else {
+
+                                timer.cancel();
+                                endGameMessage();
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -257,6 +275,23 @@ public class GameController {
         };
         long delay = 1000;
         timer.schedule(task, speed, speed);
+    }
+
+    private void endGameMessage() throws RemoteException {
+        boolean newRecord = stub.isNewRecord();
+        String message = "";
+
+
+            if (newRecord)
+                message = "Игра окончнга! Вы установили новый рекорд: " + stub.getCurrentPoint();
+            else message = "Игра окончена! Набрано очков: " + stub.getCurrentPoint();
+
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(message);
+        alert.showAndWait();
+        return;
+
     }
 
     private class EventHandlerEndGame implements javafx.event.EventHandler {

@@ -44,12 +44,15 @@ public class MainController {
         prop.load(fileInputStream);
         String records = "";
 
+        int record = Integer.valueOf(prop.getProperty(String.valueOf(5)));
+        records += "Рекорд для поля размера 5x10 - " + record + "\n";
 
-        for (int i = 3; i < 11; i++)
-        {
-            int record = Integer.valueOf(prop.getProperty(String.valueOf(i)));
-            records += "Рекорд для поля размера " + i + " - " + record + "\n";
-        }
+        record = Integer.valueOf(prop.getProperty(String.valueOf(8)));
+        records += "Рекорд для поля размера 8x15 - " + record + "\n";
+
+        record = Integer.valueOf(prop.getProperty(String.valueOf(20)));
+        records += "Рекорд для поля размера 20x30 - " + record + "\n";
+
 
         fileInputStream.close();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
