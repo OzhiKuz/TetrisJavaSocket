@@ -29,7 +29,7 @@ public class MainController {
     @FXML
     public void initialize()
     {
-        comboBoxSizeField.getItems().addAll("5x10","8x15","20x30");
+        comboBoxSizeField.getItems().addAll("5x10","8x15","13x20");
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -50,8 +50,8 @@ public class MainController {
         record = Integer.valueOf(prop.getProperty(String.valueOf(8)));
         records += "Рекорд для поля размера 8x15 - " + record + "\n";
 
-        record = Integer.valueOf(prop.getProperty(String.valueOf(20)));
-        records += "Рекорд для поля размера 20x30 - " + record + "\n";
+        record = Integer.valueOf(prop.getProperty(String.valueOf(13)));
+        records += "Рекорд для поля размера 13x20 - " + record + "\n";
 
 
         fileInputStream.close();
@@ -99,7 +99,7 @@ public class MainController {
             return 3;
         if (comboBoxSizeField.getValue().compareTo("8x15") == 0)
             return 4;
-        if (comboBoxSizeField.getValue().compareTo("20x30") == 0)
+        if (comboBoxSizeField.getValue().compareTo("13x20") == 0)
             return 5;
 
         else return 0;
@@ -119,8 +119,8 @@ public class MainController {
         }
         if (size == 5)
         {
-            this.width = 20;
-            this.heigth = 30;
+            this.width = 13;
+            this.heigth = 20;
             return;
         }
     }
