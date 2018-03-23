@@ -247,7 +247,10 @@ public class GameController {
                         if (flag) {
                             Point[] oldPoints = stub.getCurrentPoints();
                             flag = stub.makeMove(1, 0);
-                            primaryStage.setScene(setFigureToScene(oldPoints, stub.getGameField()));
+                            if(flag)
+                                primaryStage.setScene(setFigureToScene(oldPoints, stub.getGameField()));
+                            else
+                                stub.setAllTwo();
 
                         } else {
                             stub.setAllTwo();
