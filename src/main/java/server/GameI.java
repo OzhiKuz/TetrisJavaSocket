@@ -17,4 +17,5 @@ public interface GameI extends Remote {
     boolean isNewRecord() throws RemoteException;
     int getCurrentPoint() throws RemoteException;
     int getRecord() throws IOException;
+    void setAllThreeToTwo() throws IOException;
 }

@@ -125,6 +125,7 @@ public class Game implements GameI {
             }
             if (count == gameField[point[i].x].length)
             {
+                setThrees(point[i].x);
                 deleteLine(point[i].x);
                 points += 100;
                 deletedLines++;
@@ -192,6 +193,30 @@ public class Game implements GameI {
         record = Integer.valueOf(prop.getProperty("" + gameField[0].length + ""));
         fileInputStream.close();
         return record;
+    }
+
+    @Override
+    public void setAllThreeToTwo() throws IOException {
+        for (int i = 0; i < gameField.length; i++)
+        {
+            for (int j = 0; j < gameField[i].length; j++)
+            {
+                if (gameField[i][j] == 3)
+                    gameField[i][j] = 2;
+            }
+        }
+    }
+
+    private void setThrees(int x)
+    {
+        for (int i = 0; i < x; i++)
+        {
+            for (int j = 0; j < gameField[i].length; j++)
+            {
+                if (gameField[i][j] == 2)
+                    gameField[i][j] = 3;
+            }
+        }
     }
 
     private void deleteLine(int x)

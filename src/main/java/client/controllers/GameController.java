@@ -147,12 +147,19 @@ public class GameController {
         for (int i = 0; i < matr.length; i++)
             for (int j = 0; j < matr[i].length; j++) {
                 if (field[i][j] == 2) {
+                    Image im = oldMatr[i][j].getImage();
+                    matr[i][j] = new ImageView(im);
+                    matr[i][j].setFitHeight(500 / heigth);
+                    matr[i][j].setFitWidth(320 / width);
+                    continue;
+                } else if (field[i][j] == 3) {
                     Image im = oldMatr[i - 1][j].getImage();
                     matr[i][j] = new ImageView(im);
                     matr[i][j].setFitHeight(500 / heigth);
                     matr[i][j].setFitWidth(320 / width);
                     continue;
-                } else if (field[i][j] == 1) {
+                }
+                else if (field[i][j] == 1) {
 
                     matr[i][j] = new ImageView(new Image("/" + picture + ".png"));
                     matr[i][j].setFitHeight(500 / heigth);
@@ -167,6 +174,7 @@ public class GameController {
 
             scene = new Scene(getContainer(), 320, 610);
         setOnKeyTypedForScene(scene);
+
         return scene;
     }
 
@@ -243,7 +251,7 @@ public class GameController {
                             int deletedLines = stub.checkForDeleteLine();
                             if (deletedLines != 0) {
                                 primaryStage.setScene(getScene(stub.getGameField()));
-
+                                stub.setAllThreeToTwo();
                                 for (int i = 0; i < deletedLines; i++) {
                                     if (speed > 300)
                                         speed -= 50;

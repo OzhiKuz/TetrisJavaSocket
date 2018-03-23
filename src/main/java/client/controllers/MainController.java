@@ -39,7 +39,7 @@ public class MainController {
     @FXML
     private void getRecord(ActionEvent actionEvent) throws IOException {
         Properties prop = new Properties();
-        FileInputStream fileInputStream = new FileInputStream("src/server/game/records.properties");
+        FileInputStream fileInputStream = new FileInputStream("src/main/resources/records.properties");
 
         prop.load(fileInputStream);
         String records = "";
