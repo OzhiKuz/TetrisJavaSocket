@@ -211,6 +211,7 @@ public class GameController {
 
         Pane vbox = new VBox(hbox);
         //vbox.setId("testId");
+
         return new VBox(hbox1,vbox,button);
     }
 
@@ -297,7 +298,7 @@ public class GameController {
 
 
             if (newRecord)
-                message = "Игра окончнга! Вы установили новый рекорд: " + stub.getCurrentPoint();
+                message = "Игра окончега! Вы установили новый рекорд: " + stub.getCurrentPoint();
             else message = "Игра окончена! Набрано очков: " + stub.getCurrentPoint();
 
 

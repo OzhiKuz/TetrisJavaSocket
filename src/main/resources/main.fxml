@@ -9,15 +9,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="318.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MainController">
+<AnchorPane prefHeight="318.0" prefWidth="219.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MainController">
     <children>
-        <HBox layoutX="15.0" layoutY="16.0" prefHeight="302.0" prefWidth="496.0">
+        <HBox layoutX="15.0" layoutY="16.0" prefHeight="302.0" prefWidth="303.0">
             <children>
-                <VBox prefHeight="302.0" prefWidth="219.0">
+                <VBox prefHeight="302.0" prefWidth="212.0">
                     <children>
-                        <Label text="Размер игрового поля">
+                        <Label text="Размер игрового поля" textFill="#fcf8f8">
                             <font>
-                                <Font size="14.0" />
+                                <Font name="System Bold Italic" size="14.0" />
                             </font>
                             <VBox.margin>
                                 <Insets left="5.0" />
@@ -28,11 +28,7 @@
                                 <Insets left="5.0" top="5.0" />
                             </VBox.margin>
                         </ComboBox>
-                    </children>
-                </VBox>
-                <VBox prefHeight="302.0" prefWidth="243.0">
-                    <children>
-                        <Button fx:id="buttonStartGame" mnemonicParsing="false" onAction="#startGame" prefHeight="69.0" prefWidth="199.0" text="Играть">
+                        <Button fx:id="buttonStartGame" mnemonicParsing="false" onAction="#startGame" prefHeight="38.0" prefWidth="120.0" text="Играть">
                             <VBox.margin>
                                 <Insets left="25.0" top="25.0" />
                             </VBox.margin>
@@ -40,7 +36,7 @@
                                 <Font size="14.0" />
                             </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#getRecord" prefHeight="69.0" prefWidth="199.0" text="Рекорды">
+                        <Button mnemonicParsing="false" onAction="#getRecord" prefHeight="40.0" prefWidth="121.0" text="Рекорды">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -48,7 +44,7 @@
                                 <Insets left="25.0" top="15.0" />
                             </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#getHelp" prefHeight="69.0" prefWidth="199.0" text="Справка">
+                        <Button mnemonicParsing="false" onAction="#getHelp" prefHeight="40.0" prefWidth="122.0" text="Справка">
                             <VBox.margin>
                                 <Insets left="25.0" top="15.0" />
                             </VBox.margin>
@@ -56,7 +52,12 @@
                                 <Font size="14.0" />
                             </font>
                         </Button>
-                    </children></VBox>
+                    </children>
+               <HBox.margin>
+                  <Insets left="50.0" />
+               </HBox.margin>
+                </VBox>
+                <VBox prefHeight="302.0" prefWidth="7.0" />
             </children>
         </HBox>
     </children>

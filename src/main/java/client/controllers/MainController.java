@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Modality;
@@ -88,6 +89,7 @@ public class MainController {
         setSize(getSize());
         controller.setWidth(width);
         controller.setHeigth(heigth);
+
         stage.setScene(controller.getScene(new int[heigth][width]));
         stage.show();
         controller.processGame();
@@ -125,7 +127,20 @@ public class MainController {
         }
     }
 
-    public void getHelp(ActionEvent actionEvent) {
+    public void getHelp(ActionEvent actionEvent) throws IOException {
+        stage = new Stage();
 
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/help.fxml"));
+        Parent root = loader.load();
+        root.setId("pane");
+        stage.setTitle("Справка");
+        stage.setResizable(false);
+
+        stage.initModality(Modality.WINDOW_MODAL);//свойство окна поверх родительского
+        stage.initOwner(primaryStage); //указываем родительское окно
+        Scene scene = new Scene(root);
+        scene.getStylesheets().addAll(this.getClass().getResource("/style.css").toExternalForm());
+        stage.setScene(scene);
+        stage.show();
     }
 }

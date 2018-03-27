@@ -13,7 +13,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
         Parent root = loader.load();
+        root.setId("pane");
         Scene scene = new Scene(root);
+        scene.getStylesheets().addAll(this.getClass().getResource("/style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Тетрис");
         primaryStage.setResizable(false);
