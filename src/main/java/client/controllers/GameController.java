@@ -18,8 +18,11 @@ import javafx.stage.Stage;
 import server.GameI;
 
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Timer;
@@ -31,7 +34,10 @@ public class GameController {
     private int width;
     private int heigth;
     private Stage primaryStage;
-    private GameI stub;
+    //private GameI stub;
+    private Socket clientSocket;
+    private DataOutputStream oos;
+    private DataInputStream ois;
     private Scene scene;
     private int picture;
 
@@ -41,8 +47,8 @@ public class GameController {
 
 
     @FXML
-    public void initialize() {
-
+    public void initialize() throws IOException {
+            clientSocket = new Socket("localhost",800);
     }
 
     public void setWidth(int width) {
@@ -57,9 +63,9 @@ public class GameController {
         this.primaryStage = primaryStage;
     }
 
-    public void setStub(GameI stub) {
+    /*public void setStub(GameI stub) {
         this.stub = stub;
-    }
+    } */
 
     private void setOnKeyTypedForScene(Scene scene)
     {
@@ -215,16 +221,28 @@ public class GameController {
         return new VBox(hbox1,vbox,button);
     }
 
+    private void sendRequest(String socketRequest) throws IOException {
+        oos.writeUTF(socketRequest);
+        oos.flush();
+        oos.close();
+    }
+
     public void processGame() throws IOException {
         timer = new java.util.Timer();
 
-        stub.setGameField(new int[heigth][width]);
+        //stub.setGameField(new int[heigth][width]);
+        String socketRequest = "setGameField " + heigth + " "  + width + "";
+        sendRequest(socketRequest);
+
 
         //while (stub.generationFigure()) {
         //генерируем самую первую фигуру
-        stub.generationFigure();
+        //stub.generationFigure();
+        socketRequest = "generationFigure";
+        sendRequest(socketRequest);
         Random rand = new Random();
         picture = rand.nextInt(4);
+        //реализовать метод в классе Parser, который будет преобразовывать строку в матрицу int
         primaryStage.setScene(setFigureToScene(null, stub.getGameField()));
         // метод создающий задачу
         clock();
@@ -245,20 +263,31 @@ public class GameController {
             public void run() {
                 Platform.runLater(() -> {
                     try {
+                        String socketRequest = "";
                         if (flag) {
+                            //реализовать метод в классе Parser, который будет из строки создавать массив Point
                             Point[] oldPoints = stub.getCurrentPoints();
+                            //реализовать метод в классе Parser, который будет из строки создавать boolean
                             flag = stub.makeMove(1, 0);
                             if(flag)
                                 primaryStage.setScene(setFigureToScene(oldPoints, stub.getGameField()));
                             else
-                                stub.setAllTwo();
+                                //stub.setAllTwo();
+                                socketRequest = "setAllTwo";
+                                sendRequest(socketRequest);
 
                         } else {
-                            stub.setAllTwo();
+                            //stub.setAllTwo();
+                            socketRequest = "setAllTwo";
+                            sendRequest(socketRequest);
+
+                            //реализовать метод в классе Parser, который будет из строки создавать int
                             int deletedLines = stub.checkForDeleteLine();
                             if (deletedLines != 0) {
                                 primaryStage.setScene(getScene(stub.getGameField()));
-                                stub.setAllThreeToTwo();
+                                //stub.setAllThreeToTwo();
+                                socketRequest = "setAllThreeToTwo";
+                                sendRequest(socketRequest);
                                 for (int i = 0; i < deletedLines; i++) {
                                     if (speed > 300)
                                         speed -= 50;

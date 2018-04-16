@@ -82,9 +82,9 @@ public class MainController {
         stage.initModality(Modality.WINDOW_MODAL);//свойство окна поверх родительского
         stage.initOwner(primaryStage); //указываем родительское окно
         GameController controller = loader.getController();
-        Registry registry = LocateRegistry.getRegistry(null,1080);
-        GameI stub =  (GameI) registry.lookup("GameI");
-        controller.setStub(stub);
+        //Registry registry = LocateRegistry.getRegistry(null,1080);
+       // GameI stub =  (GameI) registry.lookup("GameI");
+        //controller.setStub(stub);
         controller.setPrimaryStage(stage);
         setSize(getSize());
         controller.setWidth(width);
