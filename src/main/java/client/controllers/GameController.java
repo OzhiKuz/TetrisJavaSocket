@@ -1,5 +1,6 @@
 package client.controllers;
 
+import client.Parser;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -15,12 +16,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import server.GameI;
 
 import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
@@ -29,10 +28,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameController {
+    //реализовать получение ответас сервера
 
     private ImageView[][] matr;
     private int width;
-    private int heigth;
+    private int height;
     private Stage primaryStage;
     //private GameI stub;
     private Socket clientSocket;
@@ -48,15 +48,15 @@ public class GameController {
 
     @FXML
     public void initialize() throws IOException {
-            clientSocket = new Socket("localhost",800);
+        clientSocket = new Socket("localhost", 800);
     }
 
     public void setWidth(int width) {
         this.width = width;
     }
 
-    public void setHeigth(int heigth) {
-        this.heigth = heigth;
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -67,62 +67,56 @@ public class GameController {
         this.stub = stub;
     } */
 
-    private void setOnKeyTypedForScene(Scene scene)
-    {
+    private void setOnKeyTypedForScene(Scene scene) {
         scene.setOnKeyTyped(ke -> {
             if (ke.getCharacter().equals("d") || ke.getCharacter().equals("в")) {
                 try {
-                    Point[] oldPoints1 = stub.getCurrentPoints();
-                    stub.makeMove(0, 1);
+                    sendRequest("getCurrentPoints");
+                    Point[] oldPoints1 = Parser.stringToPoints(getResponse());
+                    sendRequest("makeMove 0 1");
                     flag = true;
-                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
+                    sendRequest("getGameField");
+                    String socketResponse = getResponse();
+                    primaryStage.setScene(setFigureToScene(oldPoints1,  Parser.stringToMatr(socketResponse)));
 
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             if (ke.getCharacter().equals("w") || ke.getCharacter().equals("ц")) {
                 try {
-                    Point[] oldPoints1 = stub.getCurrentPoints();
-                    stub.turn90();
+                    sendRequest("getCurrentPoints");
+                    Point[] oldPoints1 = Parser.stringToPoints(getResponse());
+                    sendRequest("turn90");
                     flag = true;
-                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
+                    String socketResponse = getResponse();
+                    primaryStage.setScene(setFigureToScene(oldPoints1,  Parser.stringToMatr(socketResponse)));
 
-                } catch (RemoteException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             if (ke.getCharacter().equals("s") || ke.getCharacter().equals("ы")) {
                 try {
-                    Point[] oldPoints1 = stub.getCurrentPoints();
-                    stub.makeMove(1, 0);
+                    sendRequest("getCurrentPoints");
+                    Point[] oldPoints1 = Parser.stringToPoints(getResponse());
+                    sendRequest("makeMove 1 0");
                     flag = true;
-                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
+                    String socketResponse = getResponse();
+                    primaryStage.setScene(setFigureToScene(oldPoints1,  Parser.stringToMatr(socketResponse)));
 
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             if (ke.getCharacter().equals("a") || ke.getCharacter().equals("ф")) {
                 try {
-                    Point[] oldPoints1 = stub.getCurrentPoints();
-                    stub.makeMove(0, -1);
-                    primaryStage.setScene(setFigureToScene(oldPoints1, stub.getGameField()));
+                    sendRequest("getCurrentPoints");
+                    Point[] oldPoints1 = Parser.stringToPoints(getResponse());
+                    sendRequest("makeMove 0 -1");
+                    String socketResponse = getResponse();
+                    primaryStage.setScene(setFigureToScene(oldPoints1,  Parser.stringToMatr(socketResponse)));
 
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -131,16 +125,17 @@ public class GameController {
     }
 
     private Scene setFigureToScene(Point[] oldPoints, int[][] field) throws IOException {
-        Point[] points = stub.getCurrentPoints();
+        sendRequest("getCurrentPoints");
+        Point[] points = Parser.stringToPoints(getResponse());
         if (oldPoints != null)
-        for (int i = 0; i < oldPoints.length; i++) {
-            matr[oldPoints[i].x][oldPoints[i].y] = new ImageView(new Image("/field.png"));
-            matr[oldPoints[i].x][oldPoints[i].y].setFitHeight(500 / heigth);
-            matr[oldPoints[i].x][oldPoints[i].y].setFitWidth(320 / width);
-        }
+            for (int i = 0; i < oldPoints.length; i++) {
+                matr[oldPoints[i].x][oldPoints[i].y] = new ImageView(new Image("/field.png"));
+                matr[oldPoints[i].x][oldPoints[i].y].setFitHeight(500 / height);
+                matr[oldPoints[i].x][oldPoints[i].y].setFitWidth(320 / width);
+            }
         for (int i = 0; i < points.length; i++) {
             matr[points[i].x][points[i].y] = new ImageView(new Image("/" + picture + ".png"));
-            matr[points[i].x][points[i].y].setFitHeight(500 / heigth);
+            matr[points[i].x][points[i].y].setFitHeight(500 / height);
             matr[points[i].x][points[i].y].setFitWidth(320 / width);
         }
         Scene scene = new Scene(getContainer(), 320, 610);
@@ -152,36 +147,35 @@ public class GameController {
 
         ImageView[][] oldMatr = matr;
 
-        matr = new ImageView[heigth][width];
+        matr = new ImageView[height][width];
         for (int i = 0; i < matr.length; i++)
             for (int j = 0; j < matr[i].length; j++) {
                 if (field[i][j] == 2) {
                     Image im = oldMatr[i][j].getImage();
                     matr[i][j] = new ImageView(im);
-                    matr[i][j].setFitHeight(500 / heigth);
+                    matr[i][j].setFitHeight(500 / height);
                     matr[i][j].setFitWidth(320 / width);
                     continue;
                 } else if (field[i][j] == 3) {
                     Image im = oldMatr[i - 1][j].getImage();
                     matr[i][j] = new ImageView(im);
-                    matr[i][j].setFitHeight(500 / heigth);
+                    matr[i][j].setFitHeight(500 / height);
                     matr[i][j].setFitWidth(320 / width);
                     continue;
-                }
-                else if (field[i][j] == 1) {
+                } else if (field[i][j] == 1) {
 
                     matr[i][j] = new ImageView(new Image("/" + picture + ".png"));
-                    matr[i][j].setFitHeight(500 / heigth);
+                    matr[i][j].setFitHeight(500 / height);
                     matr[i][j].setFitWidth(320 / width);
                     continue;
                 }
 
                 matr[i][j] = new ImageView(new Image("/field.png"));
-                matr[i][j].setFitHeight(500 / heigth);
+                matr[i][j].setFitHeight(500 / height);
                 matr[i][j].setFitWidth(320 / width);
             }
 
-            scene = new Scene(getContainer(), 320, 610);
+        scene = new Scene(getContainer(), 320, 610);
         setOnKeyTypedForScene(scene);
 
         return scene;
@@ -191,23 +185,25 @@ public class GameController {
         Button button = new Button("Завершить!");
         button.setPrefSize(150, 40);
         button.setFont(new Font("Times new roman", 20));
-        button.setPadding(new Insets(5,0,0,20));
+        button.setPadding(new Insets(5, 0, 0, 20));
         button.setOnAction(new EventHandlerEndGame());
-        Label label = new Label("Очки: " + stub.getCurrentPoint());
+        sendRequest("getCurrentPoint");
+        Label label = new Label("Очки: " + getResponse());
         label.setFont(new Font("Times new roman", 20));
         //label.setPadding(new Insets(20, 0, 0, 0));
 
-        Label label1 = new Label("Рекорд: " + stub.getRecord());
-        label1.setFont(new Font("Times new roman",20));
-        label1.setPadding(new Insets(0,0,0,20));
+        sendRequest("getRecord");
+        Label label1 = new Label("Рекорд: " + getResponse());
+        label1.setFont(new Font("Times new roman", 20));
+        label1.setPadding(new Insets(0, 0, 0, 20));
 
-        Pane hbox1 = new HBox(label,label1);
+        Pane hbox1 = new HBox(label, label1);
         hbox1.setPadding(new Insets(5, 20, 20, 20));
 
 
-        Pane[] hbox = new Pane[heigth];
+        Pane[] hbox = new Pane[height];
 
-        for (int i = 0; i < heigth; i++) {
+        for (int i = 0; i < height; i++) {
             ImageView[] im = new ImageView[width];
             for (int j = 0; j < width; j++) {
                 im[j] = matr[i][j];
@@ -218,7 +214,7 @@ public class GameController {
         Pane vbox = new VBox(hbox);
         //vbox.setId("testId");
 
-        return new VBox(hbox1,vbox,button);
+        return new VBox(hbox1, vbox, button);
     }
 
     private void sendRequest(String socketRequest) throws IOException {
@@ -227,35 +223,30 @@ public class GameController {
         oos.close();
     }
 
+    private String getResponse() {
+        //реализовать
+        return "";
+    }
+
     public void processGame() throws IOException {
         timer = new java.util.Timer();
 
-        //stub.setGameField(new int[heigth][width]);
-        String socketRequest = "setGameField " + heigth + " "  + width + "";
-        sendRequest(socketRequest);
-
-
+        //stub.setGameField(new int[height][width]);
+        String socketResponse;
+        sendRequest("setGameField " + height + " " + width + "");
         //while (stub.generationFigure()) {
         //генерируем самую первую фигуру
         //stub.generationFigure();
-        socketRequest = "generationFigure";
-        sendRequest(socketRequest);
+        sendRequest("generationFigure");
+        getResponse();
         Random rand = new Random();
         picture = rand.nextInt(4);
         //реализовать метод в классе Parser, который будет преобразовывать строку в матрицу int
-        primaryStage.setScene(setFigureToScene(null, stub.getGameField()));
+        sendRequest("getGameField");
+        socketResponse = getResponse();
+        primaryStage.setScene(setFigureToScene(null, Parser.stringToMatr(socketResponse)));
         // метод создающий задачу
         clock();
-
-            /*stub.setAllTwo();
-            int deletedLines = stub.checkForDeleteLine();
-            if (deletedLines != 0) {
-                for (int i = 0; i < deletedLines; i++) {
-                    if (speed > 300)
-                        speed -= 25;
-                }
-            }*/
-        //}
     }
 
     private void clock() {
@@ -264,30 +255,37 @@ public class GameController {
                 Platform.runLater(() -> {
                     try {
                         String socketRequest = "";
+                        String socketResponse = "";
                         if (flag) {
                             //реализовать метод в классе Parser, который будет из строки создавать массив Point
-                            Point[] oldPoints = stub.getCurrentPoints();
+                            sendRequest("getCurrentPoints");
+                            socketResponse = getResponse();
+                            Point[] oldPoints = Parser.stringToPoints(socketResponse);
                             //реализовать метод в классе Parser, который будет из строки создавать boolean
-                            flag = stub.makeMove(1, 0);
-                            if(flag)
-                                primaryStage.setScene(setFigureToScene(oldPoints, stub.getGameField()));
-                            else
+                            sendRequest("makeMove 1 0");
+                            socketResponse = getResponse();
+                            flag = Parser.stringToBoolean(socketResponse);
+                            if (flag) {
+                                sendRequest("getGameField");
+                                socketResponse = getResponse();
+                                primaryStage.setScene(setFigureToScene(oldPoints, Parser.stringToMatr(socketResponse)));
+                            } else
                                 //stub.setAllTwo();
-                                socketRequest = "setAllTwo";
-                                sendRequest(socketRequest);
-
+                                sendRequest("setAllTwo");
                         } else {
                             //stub.setAllTwo();
-                            socketRequest = "setAllTwo";
-                            sendRequest(socketRequest);
+                            sendRequest("setAllTwo");
 
                             //реализовать метод в классе Parser, который будет из строки создавать int
-                            int deletedLines = stub.checkForDeleteLine();
+                            sendRequest("checkForDeleteLine");
+                            socketResponse = getResponse();
+                            int deletedLines = Parser.stringToInt(socketResponse);
                             if (deletedLines != 0) {
-                                primaryStage.setScene(getScene(stub.getGameField()));
+                                sendRequest("getGameField");
+                                socketResponse = getResponse();
+                                primaryStage.setScene(getScene(Parser.stringToMatr(socketResponse)));
                                 //stub.setAllThreeToTwo();
-                                socketRequest = "setAllThreeToTwo";
-                                sendRequest(socketRequest);
+                                sendRequest("setAllThreeToTwo");
                                 for (int i = 0; i < deletedLines; i++) {
                                     if (speed > 300)
                                         speed -= 50;
@@ -297,15 +295,19 @@ public class GameController {
                                 timer = new java.util.Timer();
                                 clock();
                             }
-                            if (stub.generationFigure()) {
+                            sendRequest("generationFigure");
+                            socketResponse = getResponse();
+                            if (Parser.stringToBoolean(socketResponse)) {
                                 flag = true;
                                 Random rand = new Random();
                                 picture = rand.nextInt(4);
-                                primaryStage.setScene(setFigureToScene(null, stub.getGameField()));
+                                sendRequest("getGameField");
+                                socketResponse = getResponse();
+                                primaryStage.setScene(setFigureToScene(null, Parser.stringToMatr(socketResponse)));
                                 //timer = new Timer();
                                 //clock();
 
-                            }else {
+                            } else {
 
                                 timer.cancel();
                                 endGameMessage();
@@ -321,21 +323,22 @@ public class GameController {
         timer.schedule(task, speed, speed);
     }
 
-    private void endGameMessage() throws RemoteException {
-        boolean newRecord = stub.isNewRecord();
+    private void endGameMessage() throws IOException {
+        sendRequest("isNewRecord");
+
+        boolean newRecord = Parser.stringToBoolean(getResponse());
         String message = "";
 
-
-            if (newRecord)
-                message = "Игра окончега! Вы установили новый рекорд: " + stub.getCurrentPoint();
-            else message = "Игра окончена! Набрано очков: " + stub.getCurrentPoint();
+        sendRequest("getCurrentPoint");
+        String socketResponse = getResponse();
+        if (newRecord)
+            message = "Игра окончега! Вы установили новый рекорд: " + socketResponse;
+        else message = "Игра окончена! Набрано очков: " + socketResponse;
 
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(message);
         alert.showAndWait();
-        return;
-
     }
 
     private class EventHandlerEndGame implements javafx.event.EventHandler {

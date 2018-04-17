@@ -9,13 +9,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import server.GameI;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.Properties;
 
 public class MainController {
@@ -88,7 +85,7 @@ public class MainController {
         controller.setPrimaryStage(stage);
         setSize(getSize());
         controller.setWidth(width);
-        controller.setHeigth(heigth);
+        controller.setHeight(heigth);
 
         stage.setScene(controller.getScene(new int[heigth][width]));
         stage.show();
