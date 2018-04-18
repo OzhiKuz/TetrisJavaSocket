@@ -17,9 +17,9 @@ import java.util.Properties;
 
 public class MainController {
     private Stage primaryStage;
-    Stage stage;
+    private Stage stage;
     private int width;
-    private int heigth;
+    private int height;
 
     @FXML
     private ComboBox<String> comboBoxSizeField;
@@ -56,11 +56,10 @@ public class MainController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(records);
         alert.showAndWait();
-        return;
 
     }
 
-    public void startGame(ActionEvent actionEvent) throws IOException, NotBoundException, InterruptedException {
+    public void startGame(ActionEvent actionEvent) throws IOException {
 
         if (comboBoxSizeField.getValue() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -85,9 +84,9 @@ public class MainController {
         controller.setPrimaryStage(stage);
         setSize(getSize());
         controller.setWidth(width);
-        controller.setHeight(heigth);
+        controller.setHeight(height);
 
-        stage.setScene(controller.getScene(new int[heigth][width]));
+        stage.setScene(controller.getScene(new int[height][width]));
         stage.show();
         controller.processGame();
     }
@@ -107,20 +106,19 @@ public class MainController {
         if (size == 3)
         {
             this.width = 5;
-            this.heigth = 10;
+            this.height = 10;
             return;
         }
         if (size == 4)
         {
             this.width = 8;
-            this.heigth = 15;
+            this.height = 15;
             return;
         }
         if (size == 5)
         {
             this.width = 13;
-            this.heigth = 20;
-            return;
+            this.height = 20;
         }
     }
 

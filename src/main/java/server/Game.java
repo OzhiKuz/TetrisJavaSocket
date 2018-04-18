@@ -4,15 +4,14 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.Random;
 
-public class Game implements GameI {
-    int[][] gameField;
+public class Game {
+    private int[][] gameField;
     Figure figure;
-    int points;
-    boolean newRecord = false;
+    private int points;
+    private boolean newRecord = false;
 
     public int[][] getGameField() {
         return gameField;
@@ -23,24 +22,19 @@ public class Game implements GameI {
         points = 0;
     }
 
-    @Override
-    public boolean makeMove(int x, int y) throws RemoteException, InterruptedException {
+    public boolean makeMove(int x, int y) {
 
         //Thread.sleep(1000);
         Point[] point = this.figure.getCurrentPoints();
 
         if(this.figure.move(x,y,gameField))
         {
-            for (int i = 0; i < point.length; i++)
-            {
-                gameField[point[i].x][point[i].y] = 0;
-
+            for (Point aPoint : point) {
+                gameField[aPoint.x][aPoint.y] = 0;
             }
             point = this.figure.getCurrentPoints();
-            for (int i = 0; i < point.length; i++)
-            {
-                gameField[point[i].x][point[i].y] = 1;
-
+            for (Point aPoint : point) {
+                gameField[aPoint.x][aPoint.y] = 1;
             }
             return true;
         } else
@@ -50,9 +44,8 @@ public class Game implements GameI {
 
     }
 
-    @Override
     public boolean generationFigure() throws IOException {
-        int figure = 0;
+        int figure;
         Random rand = new Random();
         figure = rand.nextInt(7);
 
@@ -97,9 +90,8 @@ public class Game implements GameI {
         if (this.figure.setFirst(gameField))
         {
             Point[] point = this.figure.getCurrentPoints();
-            for (int i = 0; i < point.length; i++)
-            {
-                gameField[point[i].x][point[i].y] = 1;
+            for (Point aPoint : point) {
+                gameField[aPoint.x][aPoint.y] = 1;
             }
             return true;
         } else
@@ -109,24 +101,19 @@ public class Game implements GameI {
         }
     }
 
-    @Override
-    public int checkForDeleteLine() throws RemoteException {
+    public int checkForDeleteLine() {
         Point[] point = this.figure.getCurrentPoints();
                 int deletedLines = 0;
-                for (int i = 0; i < point.length; i++)
-                {
-                    int count = 0;
-                    for (int j = 0; j < gameField[point[i].x].length; j++)
-                    {
-                        if (gameField[point[i].x][j] == 2)
-                        {
-                            count++;
-                        }
+        for (Point aPoint : point) {
+            int count = 0;
+            for (int j = 0; j < gameField[aPoint.x].length; j++) {
+                if (gameField[aPoint.x][j] == 2) {
+                    count++;
+                }
             }
-            if (count == gameField[point[i].x].length)
-            {
-                setThrees(point[i].x);
-                deleteLine(point[i].x);
+            if (count == gameField[aPoint.x].length) {
+                setThrees(aPoint.x);
+                deleteLine(aPoint.x);
                 points += 100;
                 deletedLines++;
             }
@@ -135,30 +122,24 @@ public class Game implements GameI {
     return deletedLines;
     }
 
-    @Override
-    public void setAllTwo() throws RemoteException {
+    public void setAllTwo() {
         Point[] point = this.figure.getCurrentPoints();
-        for (int i = 0; i < point.length; i++)
-        {
-            gameField[point[i].x][point[i].y] = 2;
+        for (Point aPoint : point) {
+            gameField[aPoint.x][aPoint.y] = 2;
         }
     }
 
-    @Override
-    public boolean turn90() throws RemoteException {
+    public boolean turn90() {
         Point[] point = this.figure.getCurrentPoints();
 
         if(this.figure.turn90(gameField))
         {
-            for (int i = 0; i < point.length; i++)
-            {
-                gameField[point[i].x][point[i].y] = 0;
-
+            for (Point aPoint : point) {
+                gameField[aPoint.x][aPoint.y] = 0;
             }
             point = this.figure.getCurrentPoints();
-            for (int i = 0; i < point.length; i++)
-            {
-                gameField[point[i].x][point[i].y] = 1;
+            for (Point aPoint : point) {
+                gameField[aPoint.x][aPoint.y] = 1;
 
             }
             return true;
@@ -168,22 +149,18 @@ public class Game implements GameI {
         }
     }
 
-    @Override
-    public Point[] getCurrentPoints() throws RemoteException {
+    public Point[] getCurrentPoints() {
         return figure.getCurrentPoints();
     }
 
-    @Override
-    public boolean isNewRecord() throws RemoteException {
+    public boolean isNewRecord() {
         return newRecord;
     }
 
-    @Override
-    public int getCurrentPoint() throws RemoteException {
+    public int getCurrentPoint() {
         return points;
     }
 
-    @Override
     public int getRecord() throws IOException {
         Properties prop = new Properties();
         FileInputStream fileInputStream = new FileInputStream("src/main/resources/records.properties");
@@ -195,8 +172,7 @@ public class Game implements GameI {
         return record;
     }
 
-    @Override
-    public void setAllThreeToTwo() throws IOException {
+    public void setAllThreeToTwo() {
         for (int i = 0; i < gameField.length; i++)
         {
             for (int j = 0; j < gameField[i].length; j++)
