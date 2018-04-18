@@ -23,12 +23,12 @@
                                 <Insets left="5.0" />
                             </VBox.margin>
                         </Label>
-                        <ComboBox fx:id="comboBoxSizeField" prefWidth="150.0">
+                        <ComboBox fx:id="comboBoxSizeField" prefHeight="25.0" prefWidth="157.0">
                             <VBox.margin>
                                 <Insets left="5.0" top="5.0" />
                             </VBox.margin>
                         </ComboBox>
-                        <Button fx:id="buttonStartGame" mnemonicParsing="false" onAction="#startGame" prefHeight="38.0" prefWidth="120.0" text="Играть">
+                        <Button fx:id="buttonStartGame" mnemonicParsing="false" onAction="#startGame" prefHeight="38.0" prefWidth="122.0" text="Играть">
                             <VBox.margin>
                                 <Insets left="25.0" top="25.0" />
                             </VBox.margin>
