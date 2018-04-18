@@ -1,5 +1,7 @@
 package server;
 
+import java.awt.*;
+
 public class Converter {
 
     public static String matrixToString(int[][] matrix){
@@ -13,6 +15,12 @@ public class Converter {
                 resultBuilder.append(matrix[i][j]);
         result = resultBuilder.toString();
         return result;
+    }
+
+    public static String pointsToString(Point[] points){
+        StringBuilder result = new StringBuilder();
+        for (Point point : points) result.append(point.x).append(" ").append(point.y).append(" ");
+        return result.toString();
     }
 
 }

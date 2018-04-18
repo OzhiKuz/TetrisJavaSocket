@@ -49,6 +49,8 @@ public class GameController {
     @FXML
     public void initialize() throws IOException {
         clientSocket = new Socket("localhost", 800);
+        oos = new DataOutputStream(clientSocket.getOutputStream());
+        ois = new DataInputStream(clientSocket.getInputStream());
     }
 
     public void setWidth(int width) {
@@ -223,9 +225,13 @@ public class GameController {
         oos.close();
     }
 
-    private String getResponse() {
-        //реализовать
-        return "";
+    private String getResponse() throws IOException {
+        String response = "";
+        while (response.length() == 0) {
+            response = ois.readUTF();
+        }
+        ois.close();
+        return response;
     }
 
     public void processGame() throws IOException {
@@ -254,8 +260,7 @@ public class GameController {
             public void run() {
                 Platform.runLater(() -> {
                     try {
-                        String socketRequest = "";
-                        String socketResponse = "";
+                        String socketResponse;
                         if (flag) {
                             //реализовать метод в классе Parser, который будет из строки создавать массив Point
                             sendRequest("getCurrentPoints");

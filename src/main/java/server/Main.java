@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
@@ -19,30 +20,58 @@ public class Main {
             DataOutputStream out = new DataOutputStream(client.getOutputStream());
             DataInputStream in = new DataInputStream(client.getInputStream());
 
+            Game game = new Game();
+            String response = "";
+
             while (!client.isClosed()) {
                 String request = in.readUTF();
                 String[] splitRequest = request.split(" ");
                 //проверка запроса
-                int first = Integer.parseInt(splitRequest[0]);
-                int second = Integer.parseInt(splitRequest[1]);
-                String response;
-                if(second != 0) {
-                    int div = first / second;
-                    int mod = first % second;
-
-                    response = "Результат целочисленного деления = " + div + ", остаток от деления = " + mod;
+                switch (splitRequest[0]){
+                    case "getCurrentPoints":
+                        Point[] points = game.getCurrentPoints();
+                        response = Converter.pointsToString(points);
+                        break;
+                    case "getCurrentPoint":
+                        response = String.valueOf(game.getCurrentPoint());
+                        break;
+                    case "makeMove":
+                        if(game.makeMove(Integer.parseInt(splitRequest[1]), Integer.parseInt(splitRequest[2])))
+                            response = "true";
+                        else
+                            response = "false";
+                        break;
+                    case "turn90":
+                        if(game.turn90())
+                            response = "true";
+                        else
+                            response = "false";
+                        break;
+                    case "getGameField":
+                        response = Converter.matrixToString(game.getGameField());
+                        break;
+                    case "setAllTwo":
+                        game.setAllTwo();
+                        break;
+                    case "checkForDeleteLine":
+                        response = String.valueOf(game.checkForDeleteLine());
+                        break;
+                    case "setAllThreeToTwo":
+                        game.setAllThreeToTwo();
+                        break;
+                    case "generationFigure":
+                        if(game.generationFigure())
+                            response = "true";
+                        else
+                            response = "false";
+                        break;
                 }
-                else{
-                    response = "Деление на ноль!";
-                }
-
                 out.writeUTF(response);
                 out.flush();
                 if(request.indexOf("end")>0){
                     break;
                 }
             }
-
             in.close();
             out.close();
             client.close();
