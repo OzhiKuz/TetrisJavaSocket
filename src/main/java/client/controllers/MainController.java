@@ -81,10 +81,12 @@ public class MainController {
         //Registry registry = LocateRegistry.getRegistry(null,1080);
        // GameI stub =  (GameI) registry.lookup("GameI");
         //controller.setStub(stub);
+        stage.setOnCloseRequest(event -> controller.closeStage());
         controller.setPrimaryStage(stage);
         setSize(getSize());
         controller.setWidth(width);
         controller.setHeight(height);
+
 
         stage.setScene(controller.getScene(new int[height][width]));
         stage.show();

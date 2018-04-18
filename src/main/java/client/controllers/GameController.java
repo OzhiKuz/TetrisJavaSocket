@@ -212,14 +212,14 @@ public class GameController {
         button.setFont(new Font("Times new roman", 20));
         button.setPadding(new Insets(5, 0, 0, 20));
         button.setOnAction(new EventHandlerEndGame());
-        //sendRequest("getCurrentPoint");
+        sendRequest("getCurrentPoint");
         //!!!Доработать!!!
-        Label label = new Label("Очки: " + 0); //получение очков
+        Label label = new Label("Очки: " + getResponse()); //получение очков
         label.setFont(new Font("Times new roman", 20));
         //label.setPadding(new Insets(20, 0, 0, 0));
 
-        //sendRequest("getRecord");
-        Label label1 = new Label("Рекорд: " +0);  //получение рекорда
+        sendRequest("getRecord");
+        Label label1 = new Label("Рекорд: " + getResponse());  //получение рекорда
         label1.setFont(new Font("Times new roman", 20));
         label1.setPadding(new Insets(0, 0, 0, 20));
 
@@ -250,6 +250,7 @@ public class GameController {
         //stub.setGameField(new int[height][width]);
         String socketResponse;
         sendRequest("setGameField " + height + " " + width + "");
+        getResponse();
         //while (stub.generationFigure()) {
         //генерируем самую первую фигуру
         //stub.generationFigure();
@@ -347,7 +348,7 @@ public class GameController {
         boolean newRecord = Parser.stringToBoolean(getResponse());
         String message = "";
 
-        sendRequest("getCurrentPoint");
+        sendRequest("getCurrentPoint end");
         String socketResponse = getResponse();
         if (newRecord)
             message = "Игра окончега! Вы установили новый рекорд: " + socketResponse;
@@ -362,8 +363,20 @@ public class GameController {
     private class EventHandlerEndGame implements javafx.event.EventHandler {
         @Override
         public void handle(Event event) {
-            timer.cancel();
-            primaryStage.close();
+           closeStage();
+        }
+    }
+
+    public void closeStage(){
+        timer.cancel();
+        primaryStage.close();
+        try {
+            sendRequest("end");
+            ois.close();
+            oos.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
