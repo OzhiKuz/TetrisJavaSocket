@@ -348,7 +348,7 @@ public class GameController {
         boolean newRecord = Parser.stringToBoolean(getResponse());
         String message = "";
 
-        sendRequest("getCurrentPoint end");
+        sendRequest("getCurrentPoint");
         String socketResponse = getResponse();
         if (newRecord)
             message = "Игра окончега! Вы установили новый рекорд: " + socketResponse;
@@ -371,7 +371,7 @@ public class GameController {
         timer.cancel();
         primaryStage.close();
         try {
-            sendRequest("end");
+            sendRequest("the end");
             ois.close();
             oos.close();
             clientSocket.close();

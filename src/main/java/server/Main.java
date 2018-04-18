@@ -13,7 +13,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class Main {
     public static void main(String[] args) {
-        while(true) {
+        boolean flag = true;
+        while(flag) {
             try (ServerSocket server = new ServerSocket(8000)) {
                 Socket client = server.accept();
                 System.out.println("Соединение установлено.");
@@ -26,6 +27,9 @@ public class Main {
 
                 while (!client.isClosed()) {
                     String request = in.readUTF();
+                    if (request.indexOf("end") > 0) {
+                        break;
+                    }
                     String[] splitRequest = request.split(" ");
                     //проверка запроса
                     switch (splitRequest[0]) {
@@ -87,10 +91,6 @@ public class Main {
                     }
                     out.writeUTF(response);
                     out.flush();
-                    if (request.indexOf("end") > 0) {
-                        System.out.println("Соединение закрыто.");
-                        break;
-                    }
                 }
                 in.close();
                 out.close();
