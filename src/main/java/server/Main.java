@@ -13,7 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class Main {
     public static void main(String[] args) {
-        try(ServerSocket server = new ServerSocket(1025)) {
+        try(ServerSocket server = new ServerSocket(8000)) {
             Socket client = server.accept();
             System.out.println("Соединение установлено.");
 
@@ -50,17 +50,31 @@ public class Main {
                     case "getGameField":
                         response = Converter.matrixToString(game.getGameField());
                         break;
+                    case "setGameField":
+                        int[][] gameField = new int[Integer.parseInt(splitRequest[1])][];
+                        for (int i =0; i < gameField.length; i++)
+                            gameField[i] = new int[Integer.parseInt(splitRequest[2])];
+                        game.setGameField(gameField);
+                        break;
                     case "setAllTwo":
                         game.setAllTwo();
+                        response = "void";
                         break;
                     case "checkForDeleteLine":
                         response = String.valueOf(game.checkForDeleteLine());
                         break;
                     case "setAllThreeToTwo":
                         game.setAllThreeToTwo();
+                        response = "void";
                         break;
                     case "generationFigure":
                         if(game.generationFigure())
+                            response = "true";
+                        else
+                            response = "false";
+                        break;
+                    case "isNewRecord":
+                        if(game.isNewRecord())
                             response = "true";
                         else
                             response = "false";

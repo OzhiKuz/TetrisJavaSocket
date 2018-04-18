@@ -48,9 +48,24 @@ public class GameController {
 
     @FXML
     public void initialize() throws IOException {
-        clientSocket = new Socket("localhost", 800);
+        clientSocket = new Socket("localhost", 8000);
         oos = new DataOutputStream(clientSocket.getOutputStream());
         ois = new DataInputStream(clientSocket.getInputStream());
+    }
+
+    private void sendRequest(String socketRequest) throws IOException {
+        oos.writeUTF(socketRequest);
+        oos.flush();
+        //oos.close();
+    }
+
+    private String getResponse() throws IOException {
+        String response = "";
+        while (response.length() == 0) {
+            response = ois.readUTF();
+        }
+        //ois.close();
+        return response;
     }
 
     public void setWidth(int width) {
@@ -76,6 +91,7 @@ public class GameController {
                     sendRequest("getCurrentPoints");
                     Point[] oldPoints1 = Parser.stringToPoints(getResponse());
                     sendRequest("makeMove 0 1");
+                    getResponse();
                     flag = true;
                     sendRequest("getGameField");
                     String socketResponse = getResponse();
@@ -90,7 +106,9 @@ public class GameController {
                     sendRequest("getCurrentPoints");
                     Point[] oldPoints1 = Parser.stringToPoints(getResponse());
                     sendRequest("turn90");
+                    getResponse();
                     flag = true;
+                    sendRequest("getGameField");
                     String socketResponse = getResponse();
                     primaryStage.setScene(setFigureToScene(oldPoints1,  Parser.stringToMatr(socketResponse)));
 
@@ -103,7 +121,9 @@ public class GameController {
                     sendRequest("getCurrentPoints");
                     Point[] oldPoints1 = Parser.stringToPoints(getResponse());
                     sendRequest("makeMove 1 0");
+                    getResponse();
                     flag = true;
+                    sendRequest("getGameField");
                     String socketResponse = getResponse();
                     primaryStage.setScene(setFigureToScene(oldPoints1,  Parser.stringToMatr(socketResponse)));
 
@@ -116,6 +136,9 @@ public class GameController {
                     sendRequest("getCurrentPoints");
                     Point[] oldPoints1 = Parser.stringToPoints(getResponse());
                     sendRequest("makeMove 0 -1");
+                    getResponse();
+                    flag = true;
+                    sendRequest("getGameField");
                     String socketResponse = getResponse();
                     primaryStage.setScene(setFigureToScene(oldPoints1,  Parser.stringToMatr(socketResponse)));
 
@@ -189,13 +212,14 @@ public class GameController {
         button.setFont(new Font("Times new roman", 20));
         button.setPadding(new Insets(5, 0, 0, 20));
         button.setOnAction(new EventHandlerEndGame());
-        sendRequest("getCurrentPoint");
-        Label label = new Label("Очки: " + getResponse());
+        //sendRequest("getCurrentPoint");
+        //!!!Доработать!!!
+        Label label = new Label("Очки: " + 0); //получение очков
         label.setFont(new Font("Times new roman", 20));
         //label.setPadding(new Insets(20, 0, 0, 0));
 
-        sendRequest("getRecord");
-        Label label1 = new Label("Рекорд: " + getResponse());
+        //sendRequest("getRecord");
+        Label label1 = new Label("Рекорд: " +0);  //получение рекорда
         label1.setFont(new Font("Times new roman", 20));
         label1.setPadding(new Insets(0, 0, 0, 20));
 
@@ -219,20 +243,6 @@ public class GameController {
         return new VBox(hbox1, vbox, button);
     }
 
-    private void sendRequest(String socketRequest) throws IOException {
-        oos.writeUTF(socketRequest);
-        oos.flush();
-        oos.close();
-    }
-
-    private String getResponse() throws IOException {
-        String response = "";
-        while (response.length() == 0) {
-            response = ois.readUTF();
-        }
-        ois.close();
-        return response;
-    }
 
     public void processGame() throws IOException {
         timer = new java.util.Timer();
@@ -274,13 +284,15 @@ public class GameController {
                                 sendRequest("getGameField");
                                 socketResponse = getResponse();
                                 primaryStage.setScene(setFigureToScene(oldPoints, Parser.stringToMatr(socketResponse)));
-                            } else
+                            } else {
                                 //stub.setAllTwo();
                                 sendRequest("setAllTwo");
+                                getResponse();
+                            }
                         } else {
                             //stub.setAllTwo();
                             sendRequest("setAllTwo");
-
+                            getResponse();
                             //реализовать метод в классе Parser, который будет из строки создавать int
                             sendRequest("checkForDeleteLine");
                             socketResponse = getResponse();
@@ -291,6 +303,7 @@ public class GameController {
                                 primaryStage.setScene(getScene(Parser.stringToMatr(socketResponse)));
                                 //stub.setAllThreeToTwo();
                                 sendRequest("setAllThreeToTwo");
+                                getResponse();
                                 for (int i = 0; i < deletedLines; i++) {
                                     if (speed > 300)
                                         speed -= 50;
